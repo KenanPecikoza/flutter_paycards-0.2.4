@@ -1,0 +1,93 @@
+group 'com.saitbnzl.flutterPaycards'
+version '1.0-SNAPSHOT'
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+    }
+}
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+apply plugin: 'com.android.library'
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 18
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared'
+            }
+        }
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            jniDebuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-customer.pro'
+        }
+        debug {
+            jniDebuggable true
+            debuggable true
+        }
+        profiling {
+            initWith debug
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"//, '-DCMAKE_VERBOSE_MAKEFILE=1'
+                }
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    resourcePrefix "wocr_"
+}
+ext {
+    // Sdk and tools
+    minSdkVersion = 18
+    targetSdkVersion = 27
+    compileSdkVersion = 27
+
+    // App dependencies
+    supportLibVersion = '27.1.1'
+    yearclassVersion = "2.1.0"
+
+    // App test dependencies
+    junitVersion = '4.12'
+    espressoVersion = '3.0.2'
+    robolectricVersion = "3.8"
+    mockitoVersion = "2.21.0"
+}
+
+dependencies {
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation "com.facebook.device.yearclass:yearclass:2.1.0"
+    implementation 'androidx.annotation:annotation:1.0.0'
+    testImplementation "junit:junit:4.12"
+}
